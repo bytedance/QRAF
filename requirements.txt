@@ -1,0 +1,27 @@
+certifi @ file:///croot/certifi_1671487769961/work/certifi
+charset-normalizer==3.0.1
+compressai==1.1.5
+contourpy==1.0.7
+cycler==0.11.0
+fonttools==4.38.0
+idna==3.4
+kiwisolver==1.4.4
+matplotlib==3.6.3
+numpy==1.24.1
+nvidia-cublas-cu11==11.10.3.66
+nvidia-cuda-nvrtc-cu11==11.7.99
+nvidia-cuda-runtime-cu11==11.7.99
+nvidia-cudnn-cu11==8.5.0.96
+packaging==23.0
+Pillow==9.4.0
+ptflops==0.6.9
+pyparsing==3.0.9
+python-dateutil==2.8.2
+pytorch-msssim==0.2.1
+requests==2.28.2
+scipy==1.10.0
+six==1.16.0
+torch==1.13.1
+torchvision==0.14.1
+typing_extensions==4.4.0
+urllib3==1.26.14

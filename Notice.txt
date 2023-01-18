@@ -1,0 +1,2 @@
+ [QRAF: a Quantization-error-aware Rate Adaption Framework for Learned Image Compression] 
+Copyright 2023 Bytedance Inc.
