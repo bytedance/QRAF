@@ -1,52 +1,62 @@
 # QRAF: A QUANTIZATION-ERROR-AWARE RATE ADAPTION FRAMEWORK FOR LEARNED IMAGE COMPRESSION
 Official implementation of "QRAF: a Quantization-error-aware Rate Adaption Framework for Learned Image Compression"
 
-Environment
-Recommend using Miniconda.
+## Table of Contents
+- [Environment](#Environment)
+- [Dataset](#Dataset)
+- [Inference](#Inference)
+- [RD Results](#RD Results)
 
 # Environment
+Recommend using Miniconda.
+```
     #python>=3.6 should be fine.
     conda create -n qraf python=3.8
     conda activate qraf
     pip install compressai==1.1.5
-    
+    #pip install compressai==1.1.5 -i https://pypi.mirrors.ustc.edu.cn/simple/
+ ```  
 # Dataset
 ```
    mkdir dataset
-   mv TestDataset ./dataset
+   mv Kodak ./dataset
 ```
-
+Download [Collection of Kodak](https://drive.google.com/file/d/1Fst3a0naKWx28zX--kDB5G_T6Kyec9R6/view?usp=sharing)
+or [Kodak](http://r0k.us/graphics/kodak/) for Testing.
 # Inference
+Download checkpoint  [variable rate model of Cheng2020](https://drive.google.com/file/d/1aydW2y2yohjD-cfcQKZv-SIO_FhDF4M-/view?usp=sharing) for Inference.
 ## Parameters
-dataset: dir, Test dataset path.
+- `dataset`: dir. "Test dataset path."
 
-s: int, discrete bitrate index.
+- `s`: int, default `2` "Discrete bitrate index."
 
-output_path: str, the name of reconstructed dir.
+- `output_path`: str, "The name of reconstructed dir."
 
-p: str, checkpoint path.
+- `p`: str, "Checkpoint path."
 
-patch: int, padding size.
+- `patch`: int, default `64`. "Padding size."
 
-factormode: int, whether to choose continuous bitrate adaption.
+- `factormode`: int, between `[0, 1]`, default `0`. "Whether to choose continuous bitrate adaption."
 
-factor: float, continuous bitrate quantization bin size.
+- `factor`: float between `[0.5, 12]`, default `1.5`.  "Reciprocal of continuous bitrate quantization bin size."
 
 ## Inference code
 ```
-    python3 Inference.py --dataset ./dataset/TestDataset --s 2 --output_path AttentionVRSTE -p ./Cheng2020VR.pth.tar --patch 64 --factormode 1 --factor 0.1
+    python3 Inference.py --dataset ./dataset/Kodak --s 2 --output_path AttentionVRSTE -p ./Cheng2020VR.pth.tar --patch 64 --factormode 1 --factor 0.1
 ```
 
+## Example of Inference.py
+### Discrete bitrate results
+```
+    python3 Inference.py --dataset ./dataset/Kodak --s 2 --output_path AttentionVRSTE -p ./Cheng2020VR.pth.tar --patch 64 --factormode 0 --factor 0
+```
+### Continuous bitrate results
+Change quantization bin size of the list in the range of [0.5, 12] at a quantization bin size 1/QBS at the line 381 in Inference.py.  (1/QBS in range of [0.5, 12])
+```
+    python3 Inference.py --dataset ./dataset/Kodak --s 2 --output_path AttentionVRSTE -p ./Cheng2020VR.pth.tar --patch 64 --factormode 1 --factor 0.1
+```
 ## Note
-For discrete bitrate:
-```
-    python3 Inference.py --dataset ./dataset/TestDataset --s 2 --output_path AttentionVRSTE -p ./Cheng2020VR.pth.tar --patch 64 --factormode 0 --factor 0
-```
-For continuous bitrate:
-Change arbitrary Factor in the range of [0.5, 12] in ./Inference.py line 381.
-```
-    python3 Inference.py --dataset ./dataset/TestDataset --s 2 --output_path AttentionVRSTE -p ./Cheng2020VR.pth.tar --patch 64 --factormode 1 --factor 0.1
-```
+A higher bitrate corresponds to a larger factor value which is the  reciprocal of quantization bin size.
 
 ## Discrete/Continuous Bitrate Adaption Results
 .![](assets/VariableRate.png)
