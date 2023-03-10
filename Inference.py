@@ -204,12 +204,9 @@ def inference_entropy_estimation(model, x, f, outputpath, patch, s):
     )
     _, _, height, width = x_padded.size()
 
-    # x_padded = img_window_partition(x_padded, 256)
-
     start = time.time()
-    out_net = model.forward(x_padded, noisequant=False, training_stage=4, s=s)
+    out_net = model.forward(x_padded, noisequant=False, training_stage=3, s=s)
 
-   
     elapsed_time = time.time() - start
     out_net["x_hat"] = torch.nn.functional.pad(
         out_net["x_hat"], (-padding_left, -padding_right, -padding_top, -padding_bottom)
@@ -320,13 +317,13 @@ def setup_args():
     parser.add_argument(
         "--factor",
         type=float,
-        default=0.0,
+        default=1.5,
         help="choose the value of factor",
     )
     parser.add_argument(
         "--patch",
         type=int,
-        default=384,
+        default=64,
         help="padding patch size (default: %(default)s)",
     )
     parser.add_argument(
@@ -360,8 +357,6 @@ def main(argv):
     pretrained_dict = {k: v for k, v in ckpt.items() if
                        k in model_dict.keys() and v.shape == model_dict[k].shape}
     model_dict.update(pretrained_dict)
-    # net.load_state_dict(model_dict)
-    # state_dict = load_state_dict(torch.load(args.paths))
     model_cls = Cheng2020Attention()
     model = model_cls.from_state_dict(model_dict).eval()
     model.update(force=True)
@@ -370,11 +365,11 @@ def main(argv):
     if args.cuda and torch.cuda.is_available():
         model = model.to("cuda")
 
-    if args.factormode and args.factor != 0:
-        if 0.5<=args.factor<=1.2:
+    if args.factormode:
+        if 0.5<=args.factor<=12:
             metrics = eval_model(model, filepaths, args.entropy_estimation, args.half,
-                                 args.output_path + '_factor_' + str(factor),
-                                 args.patch, s=2, factor=factor, factormode=args.factormode)
+                                 args.output_path + '_factor_' + str(args.factor),
+                                 args.patch, s=2, factor=args.factor, factormode=args.factormode)
             for k, v in metrics.items():
                 results[k].append(v)
         else:
@@ -385,12 +380,18 @@ def main(argv):
                                      args.patch, s=2, factor=factor, factormode=args.factormode)
                 for k, v in metrics.items():
                     results[k].append(v)
-
-    for s in range(model.levels):
-        metrics = eval_model(model, filepaths, args.entropy_estimation, args.half, args.output_path + '_s_' + str(s),
-                            args.patch, s, factor=0, factormode=0)
-        for k, v in metrics.items():
-            results[k].append(v)
+    elif 0<=args.s<=model.levels:
+            metrics = eval_model(model, filepaths, args.entropy_estimation, args.half,
+                                 args.output_path + '_s_' + str(args.s),
+                                 args.patch, args.s, factor=0, factormode=0)
+            for k, v in metrics.items():
+                results[k].append(v)
+    else:
+        for s in range(model.levels):
+            metrics = eval_model(model, filepaths, args.entropy_estimation, args.half, args.output_path + '_s_' + str(s),
+                                args.patch, s, factor=0, factormode=0)
+            for k, v in metrics.items():
+                results[k].append(v)
 
 
     description = (
