@@ -197,13 +197,6 @@ class Cheng2020Attention(CompressionModel):
         self.lmbda = [0.0018, 0.0035, 0.0067, 0.0130, 0.025, 0.0483, 0.0932, 0.18]
         self.Gain = torch.nn.Parameter(torch.tensor(
             [1.0000, 1.3944, 1.9293, 2.6874, 3.7268, 5.1801, 7.1957, 10.0000]), requires_grad=True)
-        # self.lmbda = [0.0018, 0.0025, 0.0035, 0.0045, 0.0067, 0.01, 0.0130, 0.019, 0.025, 0.036, 0.0483, 0.07, 0.0932, 0.14, 0.18]
-        # self.Gain = torch.nn.Parameter(torch.tensor(
-        #     [1.0000, 1.1785, 1.3944, 1.5811, 1.9293, 2.3570, 2.6874, 3.2489, 3.7268, 4.4721, 5.1801, 6.2361, 7.1957,
-        #      8.8192, 10.0000]), requires_grad=True)
-        # self.InverseGain = torch.nn.Parameter(torch.tensor(
-        #     [1.0000, 0.8485, 0.7171, 0.6325, 0.5183, 0.4243, 0.3721, 0.3078, 0.2683, 0.2236, 0.1930, 0.1604, 0.1390,
-        #      0.1134, 0.1000]), requires_grad=True)
         self.levels = len(self.lmbda)  # 8
 
     @property
